@@ -1,0 +1,110 @@
+from urllib.request import urlopen
+import bs4
+from bs4 import BeautifulSoup
+import selenium
+import bs4
+import webbrowser
+from selenium import webdriver
+import time
+import urllib.request
+import pandas as pd
+import re
+
+
+def search_engine(key_word):
+    input_element = driver.find_element_by_name("q")
+    input_element.clear()
+    input_element.send_keys(str(key_word))
+    input_element.submit()
+
+    html = driver.page_source
+    soup = BeautifulSoup(html,'html.parser')
+    category = soup.find_all('a',class_='fl')
+    result = re.findall(r'">[가-힣]{2,5}<[\/][a]>',str(category))
+    result2 = re.findall(r'">[가-힣]{2}\s[가-힣]{2}<[\/][a]>',str(category))
+    for i in result2:
+        result.append(i)
+    res = []
+    for i in result:
+        i = str(i).replace('">','')
+        i = str(i).replace('</a>','')
+        res.append(i)
+
+    info = soup.find_all('span',class_='LrzXr kno-fv')
+    info = str(info).split('>,')
+    final = []
+    for i in info:
+        i = str(i).replace('<span class="LrzXr kno-fv">','')
+        i = str(i).replace('</span','')
+        i = str(i).replace('[', '')
+        i = str(i).replace(']', '')
+        final.append(i)
+    kk = ['엔진','가격','연비','변속기','차체 치수','공차 중량']
+    sunseo = []
+    for i in res:
+        if i in kk:
+            sunseo.append(i)
+
+    return sunseo, final
+
+all = ['아반떼', 'i30', '벨로스터', '벨로스터 N', '쏘나타', '그랜저',
+       '베뉴', '코나', '투싼', '싼타페', '팰리세이드', '그랜드 스타렉스',
+       '그랜드 스타렉스 Urban', '그랜드 스타렉스 Special Vehicle',
+       '그랜드 스타렉스 Limousine', '아이오닉 Hybrid', '아이오닉 Electric',
+       '아이오닉 Plug-in', '쏘나타 Hybrid', '그랜저 Hybrid', '코나 Hybrid',
+       '코나 Electric', '넥쏘', '포터 II Electric', '포터 II', '포터 II 특장차',
+       '쏘나타 택시', '그랜저 택시', '모닝', '레이', 'K3', 'K3 GT', 'K5', 'K7',
+       '스팅어', '더 K9', 'K5 하이브리드', 'K7 하이브리드', '스토닉', '쏘울 부스터',
+       '쏘울 부스터EV', '니로', '니로플러그인 하이브리드', '니로 EV', '셀토스', '스포티지',
+       '4세대 쏘렌토', '쏘렌토', '모하비', '카니발', '카니발하이리무진', '카니발 아웃도어',
+       'K5 택시', 'K7 택시', '뉴그랜버드', '봉고Ⅲ트럭', '봉고Ⅲ EV', '탑차', '건설', '성력',
+       '수송', '모닝', '레이', 'K3', 'K3 GT', 'K5', 'K7', '스팅어', '더 K9', '니로',
+       '니로플러그인 하이브리드', '니로 EV', '쏘울 부스터EV', 'K5 하이브리드', 'K7 하이브리드',
+       '봉고Ⅲ EV', '스토닉', '쏘울 부스터', '니로', '셀토스', '스포티지', '4세대 쏘렌토',
+       '쏘렌토', '모하비', '카니발', '카니발하이리무진', '카니발 아웃도어', 'K5 택시', 'K7 택시',
+       '뉴그랜버드', '봉고Ⅲ트럭', '탑차', '건설', '성력', '수송', 'TIVOLI', 'KORANDO',
+       'REXTON SPORTS', 'REXTON SPORTS KHAN', 'G4 REXTON', 'THE NEW 스파크', 'THE NEW 말리부',
+       'THE NEW 트랙스', '트레일블레이저', '이쿼녹스', '트래버스', '콜로라도', 'THE NEW 카마로 SS',
+       'BOLT EV', 'GV80', 'G70', 'G80', 'G90', 'QM6', 'SM3ZE', 'SM6']
+
+
+#브랜드,이름,가격, 연비 , 차체지수, 공차 중량, 엔진, 변속기
+#id primary key autoincrement
+#brand varchar(20) not null,
+#name varchar(20) not null,
+#fuel_efficiency varchar(50) not null,
+#body varchar(20) not null,
+#engine varchar(50) not null,
+#trnsmission varchar(50) not null
+
+if '__main__'==__name__:
+    driver = webdriver.Chrome(r'C:\Users\lgpc\Downloads\chromedriver_win32\chromedriver.exe')
+    driver.get(url='https://www.google.com/')
+
+    resultss = pd.DataFrame()
+    resultss['엔진'] = []
+    resultss['가격'] = []
+    resultss['연비'] = []
+    resultss['변속기'] = []
+    resultss['차체 치수'] = []
+    resultss['공차 중량'] = []
+    for i in all:
+        try:
+            resultss['이름'] = i
+            sunseos, finals = search_engine(i)
+            sunseos = set(sunseos)
+            print(sunseos)
+            print(finals)
+            print('---------')
+            '''
+            resultss[sunseos[0]].append(finals[0])
+            resultss[sunseos[1]].append(finals[1])
+            resultss[sunseos[2]].append(finals[2])
+            resultss[sunseos[3]].append(finals[3])
+            resultss[sunseos[4]].append(finals[4])
+            resultss[sunseos[5]].append(finals[5])
+            '''
+        except IndexError:
+            continue
+
+    driver.quit()

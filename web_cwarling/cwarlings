@@ -1,0 +1,60 @@
+import selenium
+from urllib.request import urlopen
+import bs4
+from bs4 import BeautifulSoup
+import webbrowser
+from selenium import webdriver
+import time
+import urllib.request
+
+
+driver = webdriver.Chrome(r'C:\Users\lgpc\Downloads\chromedriver_win32\chromedriver.exe')
+
+hyun = 'http://auto.danawa.com/usedcar/?Work=list&Tab=classify&Page=1&Order=8&Brand=303&Series=&Model='
+gene = 'http://auto.danawa.com/usedcar/?Work=list&Tab=classify&Page=1&Order=8&Brand=304&Series=&Model='
+gia = 'http://auto.danawa.com/usedcar/?Work=list&Tab=classify&Page=1&Order=8&Brand=307&Series=&Model='
+shue = 'http://auto.danawa.com/usedcar/?Work=list&Tab=classify&Page=1&Order=8&Brand=312&Series=&Model='
+ssang = 'http://auto.danawa.com/usedcar/?Work=list&Tab=classify&Page=1&Order=8&Brand=326&Series=&Model='
+sam = 'http://auto.danawa.com/usedcar/?Work=list&Tab=classify&Page=1&Order=8&Brand=321&Series=&Model='
+site = [hyun,gene,gia,shue,ssang,sam]
+driver.get(url=hyun)
+
+count = 1
+link = []
+while True:
+    try:
+        image = driver.find_element_by_xpath('//*[@id="usedcarList"]/ul/li['+str(count)+']/div[1]/a/img')
+        car_name = driver.find_element_by_xpath('//*[@id="usedcarList"]/ul/li['+str(count)+']/div[1]/div/div/a')
+        oil = driver.find_element_by_xpath('//*[@id="usedcarList"]/ul/li['+str(count)+']/div[1]/div/div/div/span[1]') #휘발유 경유
+        car_driver = driver.find_element_by_xpath('//*[@id="usedcarList"]/ul/li['+str(count)+']/div[1]/div/div/div/span[2]') #수동 자동여부
+        car_price = driver.find_element_by_xpath('//*[@id="usedcarList"]/ul/li['+str(count)+']/div[4]/div/span') #차 가격
+        car_length = driver.find_element_by_xpath('//*[@id="usedcarList"]/ul/li['+str(count)+']/div[3]/div')  #주행거리
+
+        link.append(image.get_attribute('src'))
+        name = car_name.get_attribute('innerHTML')
+        oily = oil.get_attribute('innerHTML')
+        car_drivers = car_driver.get_attribute('innerHTML')
+        car_prices = car_price.get_attribute('innerHTML')
+        car_lengths = car_length.get_attribute('innerHTML')
+
+        count +=1
+        print(link)
+        print('name: ',name,'oily: ',oily,'car_drivers: ',car_drivers,'car_prices: ',car_prices,
+              'car_length: ',car_lengths)
+        time.sleep(5)
+    except selenium.common.exceptions.NoSuchElementException:
+        break
+
+'''
+c = 0
+for url in link:
+    try:
+        c += 1
+        mem = urllib.request.urlopen(url).read()
+        with open("C:/Users/lgpc/PycharmProjects/promise6424/basic/firstone/현대/"+str(c)+"_현대.png",mode="wb") as f:
+            f.write(mem)
+            print('저장되었습니다')
+    except urllib.error.HTTPError:
+        print(c)
+        continue
+'''

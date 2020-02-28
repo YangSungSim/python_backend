@@ -1,0 +1,89 @@
+from urllib.request import urlopen
+import bs4
+from bs4 import BeautifulSoup
+import selenium
+import bs4
+import webbrowser
+from selenium import webdriver
+import time
+import urllib.request
+
+Hyun = urlopen("https://www.hyundai.com/kr/ko/main.html")
+gia = urlopen("https://www.kia.com/kr/main.html")
+ssang = urlopen("http://www.smotor.com/kr/index.html")
+shue = urlopen("https://www.chevrolet.co.kr/purchase/car-line-price.gm")
+gene = urlopen("https://www.genesis.com/kr/ko/genesis.html")
+reno = urlopen("https://www.renaultsamsungm.com/2017/main/main.jsp")
+
+
+driver = webdriver.Chrome(r'C:\Users\lgpc\Downloads\chromedriver_win32\chromedriver.exe')
+
+#현 대차 크롤링
+driver.get(url='https://www.hyundai.com/kr/ko/main.html')
+time.sleep(5)
+count = 1
+one = []
+while True:
+    try:
+        name = driver.find_element_by_xpath('//*[@id="hmc_header"]/div[2]/div[3]/div[2]/nav/ul[2]/li[1]/div/div/dl/dd[6]/ul/li['+str(count)+']/a/span')
+        car_name = name.get_attribute('innerHTML')
+        one.append(car_name)
+        count += 1
+    except selenium.common.exceptions.NoSuchElementException:
+        break
+
+driver.quit()
+
+#######################################################################
+bosbj2 = BeautifulSoup(gia,'html.parser')
+nameList2 = bosbj2.find_all('strong',class_='g_name')
+two = []
+for i in nameList2:
+    i = str(i).replace('<strong class="g_name">','')
+    i = str(i).replace('</strong>','')
+    i = str(i).replace('\r','')
+    i = str(i).replace('\n','')
+    i = str(i).replace('\t', '')
+    if '<strong' in i:
+        break
+    else:
+        two.append(i)
+
+#########################################################################
+bosbj3 = BeautifulSoup(ssang,'html.parser')
+nameList3 = bosbj3.find_all('span',class_='tit')
+three = []
+for i in nameList3:
+    i = str(i).replace('<span class="tit">','')
+    i = str(i).replace('</span>','')
+    three.append(i)
+
+##########################################################################
+
+bosbj4 = BeautifulSoup(shue,'html.parser')
+nameList4 = bosbj4.find_all('h5',class_='sub_h5')
+four = []
+for i in nameList4:
+    i = str(i).replace('<h5 class="sub_h5">','')
+    i = str(i).replace('</h5>','')
+    four.append(i)
+#########################################################################
+
+five =['GV80','G70','G80','G90']
+six = ['QM6','SM3ZE','SM6']
+
+all = []
+for i in one:
+    all.append(i)
+for i in two:
+    all.append(i)
+for i in three:
+    all.append(i)
+for i in four:
+    all.append(i)
+for i in five:
+    all.append(i)
+for i in six:
+    all.append(i)
+
+print(all)
